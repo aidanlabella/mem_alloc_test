@@ -14,10 +14,11 @@ int main(int c, char** argv) {
     int inc = atoi(argv[2]);
 
     printf("Max gbs to alloc: %d GB\n", max_gb);
+    printf("Incrementing in %dGB intervals!\n", inc);
     
     char** buf = malloc(max_gb * sizeof(char*));
 
-    for (int i = 0; i < max_gb; i+=inc) {
+    for (int i = 0; i < max_gb; i++) {
         printf("%d GB currently alloc'd, alloc %d more gb(s)?\n[y to continue]\n", i, inc);
 
         char resp[256];
@@ -25,13 +26,17 @@ int main(int c, char** argv) {
         resp[1] = '\0';
 
         if (strcasecmp(resp, "y") == 0) {
-            buf[i] = malloc(GB_BYTES);
+            int sect = i + inc;
 
-            char* subbuf = buf[i];
+            for (; i < sect; i++) {
+                buf[i] = malloc(GB_BYTES);
+                char* subbuf = buf[i];
 
-            for (int j = 0; j < GB_BYTES; j++) {
-                subbuf[j] = 'X';
+                for (int j = 0; j < GB_BYTES; j++) {
+                    subbuf[j] = 'X';
+                }
             }
+            --i;
 
             printf("Alloc'd %d more gb(s)\n", inc);
         } else {
@@ -42,6 +47,8 @@ int main(int c, char** argv) {
         }
 
     }
+
+    puts("Limit reached! Goodbye!");
 
     free(buf);
     return 0;
