@@ -5,19 +5,20 @@
 #define GB_BYTES (1024 * 1024 * 1024)
 
 int main(int c, char** argv) {
-    if (c != 2) {
-        fprintf(stderr, "At least one arg required to specify max gb allocs!\n");
+    if (c != 3) {
+        fprintf(stderr, "Usage: ./mtest lim increment\n");
         return 1;
     }
 
     int max_gb = atoi(argv[1]);
+    int inc = atoi(argv[2]);
 
     printf("Max gbs to alloc: %d GB\n", max_gb);
     
     char** buf = malloc(max_gb * sizeof(char*));
 
-    for (int i = 0; i < max_gb; i++) {
-        printf("%d GB currently alloc'd, alloc 1 more gb?\n", i);
+    for (int i = 0; i < max_gb; i+=inc) {
+        printf("%d GB currently alloc'd, alloc %d more gb(s)?\n[y to continue]\n", i, inc);
 
         char resp[256];
         fgets(resp, sizeof(resp), stdin);
@@ -32,7 +33,7 @@ int main(int c, char** argv) {
                 subbuf[j] = 'X';
             }
 
-            puts("Alloc'd 1 more gb");
+            printf("Alloc'd %d more gb(s)\n", inc);
         } else {
             puts("OK! Exiting!");
             free(buf);
